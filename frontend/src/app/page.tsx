@@ -25,9 +25,11 @@ import { RebalancingAlertsView } from "@/components/RebalancingAlertsView";
 import { TaxLossHarvestingView } from "@/components/TaxLossHarvestingView";
 import { CorrelationMatrixView } from "@/components/CorrelationMatrixView";
 import { OptionsScreenerView } from "@/components/OptionsScreenerView";
+import { AiAccuracyTracker } from "@/components/AiAccuracyTracker";
 import { StockDetailModal } from "@/components/StockDetailModal";
 import { AiStockAnalystModal } from "@/components/AiStockAnalystModal";
 import { AiChatAdvisor } from "@/components/AiChatAdvisor";
+import { SettingsModal, SettingsState } from "@/components/SettingsModal";
 
 import { 
   Sparkles, 
@@ -38,19 +40,73 @@ import {
   ReceiptText, 
   Network, 
   Zap,
+  Target,
   Layers,
   MessageSquare
 } from "lucide-react";
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<NavTab>("portfolio");
-  const [proSubTab, setProSubTab] = useState<"stress" | "rebalance" | "tax" | "correlation" | "options">("stress");
+  const [proSubTab, setProSubTab] = useState<"stress" | "rebalance" | "tax" | "correlation" | "options" | "accuracy">("stress");
 
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Expanded Settings State
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [settings, setSettings] = useState<SettingsState>({
+    theme: "light",
+    broker: "Zerodha Kite",
+    riskScore: 6,
+    maxSectorCap: 25,
+    aiModel: "Gemini 1.5 Pro",
+    taxRegime: "Section 112A / 111A",
+    autoRefreshSec: 30,
+    compactMode: false,
+    notificationsEnabled: true,
+    currency: "₹ INR"
+  });
+
+  // Sync theme & settings with document class & localStorage
+  useEffect(() => {
+    const savedSettingsStr = localStorage.getItem("niveshdristi_settings");
+    if (savedSettingsStr) {
+      try {
+        const parsed = JSON.parse(savedSettingsStr);
+        setSettings((prev) => ({ ...prev, ...parsed }));
+        document.documentElement.classList.toggle("dark", parsed.theme === "dark");
+      } catch (e) {
+        console.error("Failed to parse settings", e);
+      }
+    } else {
+      const savedTheme = localStorage.getItem("niveshdristi_theme") as "light" | "dark" | null;
+      if (savedTheme) {
+        setSettings((prev) => ({ ...prev, theme: savedTheme }));
+        document.documentElement.classList.toggle("dark", savedTheme === "dark");
+      }
+    }
+  }, []);
+
+  const handleUpdateSettings = (newSettings: Partial<SettingsState>) => {
+    setSettings((prev) => {
+      const updated = { ...prev, ...newSettings };
+      localStorage.setItem("niveshdristi_settings", JSON.stringify(updated));
+      if (newSettings.theme !== undefined) {
+        localStorage.setItem("niveshdristi_theme", newSettings.theme);
+        document.documentElement.classList.toggle("dark", newSettings.theme === "dark");
+      }
+      return updated;
+    });
+    showToast("Settings updated & saved.");
+  };
+
+  const handleToggleTheme = (newTheme?: "light" | "dark") => {
+    const nextTheme = newTheme || (settings.theme === "light" ? "dark" : "light");
+    handleUpdateSettings({ theme: nextTheme });
+  };
 
   // Modals & Drawers state
   const [selectedHoldingForSwap, setSelectedHoldingForSwap] = useState<Holding | null>(null);
@@ -59,6 +115,7 @@ export default function DashboardPage() {
   const [selectedTickerForAiReport, setSelectedTickerForAiReport] = useState<string | null>(null);
   const [isBacktestOpen, setIsBacktestOpen] = useState<boolean>(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+  const [addHoldingPrefill, setAddHoldingPrefill] = useState<{ ticker?: string; name?: string; sector?: string; price?: number } | null>(null);
   const [selectedSectorFilter, setSelectedSectorFilter] = useState<string | null>(null);
   const [isFloatingAdvisorOpen, setIsFloatingAdvisorOpen] = useState<boolean>(false);
   const [advisorInitialPrompt, setAdvisorInitialPrompt] = useState<string | null>(null);
@@ -132,10 +189,13 @@ export default function DashboardPage() {
             setActiveTab(tab);
           }
         }}
-        brokerConnected={summary?.broker_connected || "Zerodha Kite"}
-        riskScore={6}
+        brokerConnected={summary?.broker_connected || settings.broker}
+        riskScore={settings.riskScore}
         onRefresh={loadData}
         onOpenAddModal={() => setIsAddModalOpen(true)}
+        theme={settings.theme}
+        onToggleTheme={() => handleToggleTheme()}
+        onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
       {/* Main Container */}
@@ -191,6 +251,7 @@ export default function DashboardPage() {
             onOpenTechnicalDrawer={(t) => setSelectedTickerForDrawer(t)}
             onOpenAiReport={(t) => setSelectedTickerForAiReport(t)}
             onOpenAddModalWithTicker={(ticker, name, sector, price) => {
+              setAddHoldingPrefill({ ticker, name, sector, price });
               setIsAddModalOpen(true);
             }}
           />
@@ -241,6 +302,7 @@ export default function DashboardPage() {
                 { id: "tax", label: "Tax-Loss Harvesting", icon: <ReceiptText className="w-4 h-4" />, desc: "Offset Gains" },
                 { id: "correlation", label: "Correlation Matrix", icon: <Network className="w-4 h-4" />, desc: "Holding Co-Movement" },
                 { id: "options", label: "Options Screener", icon: <Zap className="w-4 h-4" />, desc: "RSI Call/Put Signals" },
+                { id: "accuracy", label: "AI Accuracy Tracker", icon: <Target className="w-4 h-4" />, desc: "Signal Backtest Log" },
               ].map((sub) => {
                 const isCurrent = proSubTab === sub.id;
                 return (
@@ -266,6 +328,7 @@ export default function DashboardPage() {
             {proSubTab === "tax" && <TaxLossHarvestingView />}
             {proSubTab === "correlation" && <CorrelationMatrixView />}
             {proSubTab === "options" && <OptionsScreenerView />}
+            {proSubTab === "accuracy" && <AiAccuracyTracker />}
 
           </div>
         )}
@@ -349,11 +412,27 @@ export default function DashboardPage() {
 
       <AddHoldingModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setAddHoldingPrefill(null);
+        }}
         onSuccess={() => {
           showToast("New asset added to portfolio.");
           loadData();
+          setAddHoldingPrefill(null);
         }}
+        initialTicker={addHoldingPrefill?.ticker}
+        initialSymbolName={addHoldingPrefill?.name}
+        initialSector={addHoldingPrefill?.sector}
+        initialPrice={addHoldingPrefill?.price}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        settings={settings}
+        onUpdateSettings={handleUpdateSettings}
+        onTriggerSync={() => loadData()}
       />
 
     </div>

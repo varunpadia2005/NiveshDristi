@@ -20,7 +20,7 @@ def generate_rag_rationale(
         f"Key triggers include RSI (14) at {original_metrics.rsi_14:.1f}, MACD histogram at {original_metrics.macd_hist:.2f}, "
         f"and price trading at ₹{original_metrics.current_price:.2f} relative to 50-day SMA (₹{original_metrics.sma_50:.2f}).\n\n"
         f"**Smart Intra-Sector Swap**: **{alternative_ticker}** boasts a superior `{alternative_metrics.badge}` status "
-        f"with a composite score of `{alternative_metrics.composite_score:+.2f}` (a **+{delta_score:+.2f} point technical improvement**). "
+        f"with a composite score of `{alternative_metrics.composite_score:+.2f}` (a **{'+' if delta_score >= 0 else ''}{delta_score:.2f} point technical improvement**). "
         f"It maintains healthy momentum (RSI: {alternative_metrics.rsi_14:.1f}) and trades above key moving averages with institutional volume accumulation.\n\n"
         f"**FinBERT Sentiment Overlay**: {alternative_metrics.sentiment_headline} Market sentiment score is "
         f"`{alternative_metrics.sentiment_score:+.2f}` ({alternative_metrics.sentiment_label}), confirming strong fundamental support without value-trap risks.\n\n"

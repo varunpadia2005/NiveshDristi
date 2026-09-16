@@ -86,19 +86,19 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
   };
 
   return (
-    <div className="light-card rounded-2xl border border-slate-200 overflow-hidden bg-white">
+    <div className="light-card rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900">
       
       {/* Table Header & Controls Bar */}
-      <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
         
         <div>
           <div className="flex items-center space-x-2">
-            <Activity className="w-4 h-4 text-emerald-600" />
-            <h2 className="text-base font-extrabold text-slate-900 tracking-tight">
+            <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <h2 className="text-base font-extrabold text-slate-900 dark:text-white tracking-tight">
               Portfolio Holdings & Algorithmic Signals
             </h2>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Real-time multi-indicator evaluations (HOLD / SELL / SWAP) with FinBERT sentiment overlay.
           </p>
         </div>
@@ -107,11 +107,11 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
         <div className="flex flex-wrap items-center gap-2.5">
           
           {selectedSectorFilter && (
-            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
+            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold">
               <span>Sector: {selectedSectorFilter}</span>
               <button 
                 onClick={onClearSectorFilter}
-                className="hover:text-slate-900 ml-1 text-emerald-700 font-bold"
+                className="hover:text-slate-900 ml-1 text-emerald-700 dark:text-emerald-400 font-bold"
               >
                 ×
               </button>
@@ -126,12 +126,12 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
               placeholder="Search ticker, company..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 transition w-44 sm:w-56"
+              className="pl-8 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 transition w-44 sm:w-56"
             />
           </div>
 
           {/* Badge Filter Tabs */}
-          <div className="flex items-center rounded-xl bg-slate-100 border border-slate-200 p-0.5 text-xs font-bold">
+          <div className="flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-0.5 text-xs font-bold">
             {["ALL", "HOLD", "SWAP", "SELL"].map((b) => (
               <button
                 key={b}
@@ -141,8 +141,8 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
                     ? b === "HOLD" ? "bg-emerald-600 text-white shadow-xs" :
                       b === "SELL" ? "bg-rose-600 text-white shadow-xs" :
                       b === "SWAP" ? "bg-amber-500 text-white shadow-xs" :
-                      "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-500 hover:text-slate-900"
+                      "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 {b}
@@ -157,7 +157,7 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-slate-100 bg-slate-50/70 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+            <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               <th className="py-3 px-4">Asset / Sector</th>
               <th className="py-3 px-4">Qty & Avg Price</th>
               <th className="py-3 px-4">Current Price</th>
@@ -168,10 +168,10 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
               <th className="py-3 px-4 text-right">Smart Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-xs">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
             {loading ? (
               <tr>
-                <td colSpan={8} className="py-12 text-center text-slate-400">
+                <td colSpan={8} className="py-12 text-center text-slate-400 dark:text-slate-500">
                   <div className="inline-flex items-center space-x-2">
                     <span className="w-4 h-4 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin"></span>
                     <span>Computing real-time indicators across 130+ metrics...</span>
@@ -180,7 +180,7 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
               </tr>
             ) : filteredHoldings.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-12 text-center text-slate-400">
+                <td colSpan={8} className="py-12 text-center text-slate-400 dark:text-slate-500">
                   No holdings match the current filter criteria.
                 </td>
               </tr>
@@ -193,7 +193,7 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
                 return (
                   <tr 
                     key={h.id}
-                    className="hover:bg-slate-50/70 transition-colors group"
+                    className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors group"
                   >
                     {/* Ticker & Sector */}
                     <td className="py-3.5 px-4">
@@ -202,24 +202,24 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
                         onClick={() => onOpenStockDetail && onOpenStockDetail(h.ticker)}
                         title="Click to view live Groww-style Line & Candle Charts"
                       >
-                        <div className="font-extrabold text-slate-900 text-sm group-hover/title:text-emerald-600 transition flex items-center gap-1.5">
+                        <div className="font-extrabold text-slate-900 dark:text-white text-sm group-hover/title:text-emerald-600 dark:group-hover/title:text-emerald-400 transition flex items-center gap-1.5">
                           <span>{h.ticker}</span>
-                          <span className="text-[10px] font-bold text-emerald-600 opacity-0 group-hover/title:opacity-100 transition-opacity">
+                          <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 opacity-0 group-hover/title:opacity-100 transition-opacity">
                             View Chart →
                           </span>
                         </div>
-                        <div className="text-[11px] text-slate-500 flex items-center gap-1.5">
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                           <span>{h.symbol_name}</span>
                           <span>•</span>
-                          <span className="text-emerald-700 font-semibold">{h.sector}</span>
+                          <span className="text-emerald-700 dark:text-emerald-400 font-semibold">{h.sector}</span>
                         </div>
                       </div>
                     </td>
 
                     {/* Qty & Avg Price */}
-                    <td className="py-3.5 px-4 text-slate-700">
-                      <div className="font-bold text-slate-900">{h.quantity} shares</div>
-                      <div className="text-[11px] text-slate-400">@ ₹{h.average_buy_price.toFixed(2)}</div>
+                    <td className="py-3.5 px-4 text-slate-700 dark:text-slate-300">
+                      <div className="font-bold text-slate-900 dark:text-white">{h.quantity} shares</div>
+                      <div className="text-[11px] text-slate-400 dark:text-slate-500">@ ₹{h.average_buy_price.toFixed(2)}</div>
                     </td>
 
                     {/* Current Price & Market Value */}
@@ -228,19 +228,19 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
                       onClick={() => onOpenStockDetail && onOpenStockDetail(h.ticker)}
                       title="Click to view live chart"
                     >
-                      <div className="font-extrabold text-slate-900 font-mono">₹{h.current_price.toFixed(2)}</div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="font-extrabold text-slate-900 dark:text-white font-mono">₹{h.current_price.toFixed(2)}</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
                         Val: ₹{h.market_value.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                       </div>
                     </td>
 
                     {/* Unrealized P&L */}
                     <td className="py-3.5 px-4">
-                      <div className={`font-black flex items-center space-x-1 ${isPositive ? "text-emerald-600" : "text-rose-600"}`}>
+                      <div className={`font-black flex items-center space-x-1 ${isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                         {isPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                         <span>{isPositive ? "+" : ""}₹{h.pnl.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
                       </div>
-                      <div className={`text-[11px] font-bold ${isPositive ? "text-emerald-700" : "text-rose-700"}`}>
+                      <div className={`text-[11px] font-bold ${isPositive ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"}`}>
                         {isPositive ? "+" : ""}{h.pnl_percentage.toFixed(2)}%
                       </div>
                     </td>
@@ -252,9 +252,9 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
                           {score > 0 ? `+${score.toFixed(2)}` : score.toFixed(2)}
                         </span>
                         {/* Mini visual scale (-5 to +5) */}
-                        <div className="w-20 h-1.5 bg-slate-200 rounded-full mt-1 relative overflow-hidden">
+                        <div className="w-20 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mt-1 relative overflow-hidden">
                           {/* Center point at 50% */}
-                          <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-slate-400"></div>
+                          <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-slate-400 dark:bg-slate-500"></div>
                           <div 
                             className={`h-full rounded-full ${
                               score >= 1.5 ? "bg-emerald-500" : score <= -1.5 ? "bg-rose-500" : "bg-amber-400"
@@ -302,7 +302,7 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
                           className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
                             isSwapCandidate
                               ? "bg-amber-500 hover:bg-amber-600 text-white shadow-xs"
-                              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                              : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
                           }`}
                           title="Open AI Smart Swap Copilot"
                         >
@@ -312,7 +312,7 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
                         {/* Deep-Dive Technical Drawer */}
                         <button
                           onClick={() => onOpenTechnicalDrawer(h.ticker)}
-                          className="p-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition cursor-pointer"
+                          className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
                           title="Open 130+ Technical Indicators Deep-Dive"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -321,7 +321,7 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({
                         {/* Delete Holding */}
                         <button
                           onClick={() => onDeleteHolding(h.id)}
-                          className="p-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                          className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
                           title="Remove position from portfolio"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

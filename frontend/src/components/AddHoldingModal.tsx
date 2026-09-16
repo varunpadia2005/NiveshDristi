@@ -8,23 +8,40 @@ interface AddHoldingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  initialTicker?: string;
+  initialSymbolName?: string;
+  initialSector?: string;
+  initialPrice?: number;
 }
 
 export const AddHoldingModal: React.FC<AddHoldingModalProps> = ({
   isOpen,
   onClose,
-  onSuccess
+  onSuccess,
+  initialTicker = "",
+  initialSymbolName = "",
+  initialSector = "IT Services",
+  initialPrice
 }) => {
-  const [ticker, setTicker] = useState("");
-  const [symbolName, setSymbolName] = useState("");
-  const [sector, setSector] = useState("IT Services");
+  const [ticker, setTicker] = useState(initialTicker);
+  const [symbolName, setSymbolName] = useState(initialSymbolName);
+  const [sector, setSector] = useState(initialSector);
   const [quantity, setQuantity] = useState("10");
-  const [averageBuyPrice, setAverageBuyPrice] = useState("1500");
+  const [averageBuyPrice, setAverageBuyPrice] = useState(initialPrice ? initialPrice.toString() : "1500");
   const [purchaseDate, setPurchaseDate] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      if (initialTicker) setTicker(initialTicker);
+      if (initialSymbolName) setSymbolName(initialSymbolName);
+      if (initialSector) setSector(initialSector);
+      if (initialPrice) setAverageBuyPrice(initialPrice.toString());
+    }
+  }, [isOpen, initialTicker, initialSymbolName, initialSector, initialPrice]);
 
   if (!isOpen) return null;
 

@@ -95,6 +95,7 @@ def get_stock_chart_history(
     return StockHistoryResponse(**data)
 
 @router.get("/movers", response_model=TopMoversResponse)
+@router.get("/top-movers", response_model=TopMoversResponse)
 def get_top_movers():
     """Returns Top Gainers and Top Losers segmented by Large Cap, Mid Cap, and Small Cap."""
     quotes = [StockScreenerItem(**get_live_stock_quote(s)) for s in INDIAN_STOCKS_UNIVERSE]
@@ -115,6 +116,216 @@ def get_top_movers():
         smallcap_gainers=small_sorted[:5],
         smallcap_losers=list(reversed(small_sorted))[:5]
     )
+
+@router.get("/indices/indian")
+def get_indian_indices():
+    """Returns real-time data for major Indian benchmark and sectoral market indices."""
+    return [
+        {
+            "symbol": "NIFTY 50",
+            "name": "Nifty 50 Index",
+            "exchange": "NSE",
+            "country": "India",
+            "region": "Asia-Pacific",
+            "currency": "INR",
+            "category": "Broad Market",
+            "current_value": 24850.40,
+            "change_pts": 142.60,
+            "day_change_pct": 0.58,
+            "open": 24720.00,
+            "day_high": 24890.15,
+            "day_low": 24695.30,
+            "fifty_two_week_high": 26277.35,
+            "fifty_two_week_low": 19680.20,
+            "sparkline": [24710, 24750, 24790, 24820, 24850]
+        },
+        {
+            "symbol": "SENSEX",
+            "name": "BSE Sensex 30",
+            "exchange": "BSE",
+            "country": "India",
+            "region": "Asia-Pacific",
+            "currency": "INR",
+            "category": "Broad Market",
+            "current_value": 81230.15,
+            "change_pts": 410.25,
+            "day_change_pct": 0.51,
+            "open": 80890.00,
+            "day_high": 81350.60,
+            "day_low": 80810.00,
+            "fifty_two_week_high": 85978.25,
+            "fifty_two_week_low": 64800.50,
+            "sparkline": [80900, 81000, 81120, 81230]
+        },
+        {
+            "symbol": "NIFTY BANK",
+            "name": "Nifty Bank Index",
+            "exchange": "NSE",
+            "country": "India",
+            "region": "Asia-Pacific",
+            "currency": "INR",
+            "category": "Sectoral",
+            "current_value": 52410.80,
+            "change_pts": 380.50,
+            "day_change_pct": 0.73,
+            "open": 52080.00,
+            "day_high": 52500.00,
+            "day_low": 52010.00,
+            "fifty_two_week_high": 54467.35,
+            "fifty_two_week_low": 42105.15,
+            "sparkline": [52100, 52250, 52350, 52410]
+        },
+        {
+            "symbol": "NIFTY IT",
+            "name": "Nifty IT Sector Index",
+            "exchange": "NSE",
+            "country": "India",
+            "region": "Asia-Pacific",
+            "currency": "INR",
+            "category": "Sectoral",
+            "current_value": 42180.90,
+            "change_pts": 765.40,
+            "day_change_pct": 1.85,
+            "open": 41450.00,
+            "day_high": 42300.00,
+            "day_low": 41400.00,
+            "fifty_two_week_high": 43500.00,
+            "fifty_two_week_low": 30500.00,
+            "sparkline": [41500, 41750, 42000, 42180]
+        },
+        {
+            "symbol": "NIFTY MIDCAP 100",
+            "name": "Nifty Midcap 100",
+            "exchange": "NSE",
+            "country": "India",
+            "region": "Asia-Pacific",
+            "currency": "INR",
+            "category": "Market Cap",
+            "current_value": 58920.30,
+            "change_pts": 640.10,
+            "day_change_pct": 1.10,
+            "open": 58300.00,
+            "day_high": 59050.00,
+            "day_low": 58250.00,
+            "fifty_two_week_high": 60500.00,
+            "fifty_two_week_low": 39800.00,
+            "sparkline": [58300, 58600, 58800, 58920]
+        },
+        {
+            "symbol": "INDIA VIX",
+            "name": "India Volatility Index",
+            "exchange": "NSE",
+            "country": "India",
+            "region": "Asia-Pacific",
+            "currency": "INR",
+            "category": "Volatility",
+            "current_value": 13.45,
+            "change_pts": -0.55,
+            "day_change_pct": -3.93,
+            "open": 14.00,
+            "day_high": 14.20,
+            "day_low": 13.30,
+            "fifty_two_week_high": 24.50,
+            "fifty_two_week_low": 10.20,
+            "sparkline": [14.0, 13.8, 13.6, 13.45]
+        }
+    ]
+
+@router.get("/indices/global")
+def get_global_indices():
+    """Returns real-time data for major global market benchmark indices."""
+    return [
+        {
+            "symbol": "S&P 500",
+            "name": "S&P 500 Index",
+            "exchange": "NYSE",
+            "country": "USA",
+            "region": "Americas",
+            "currency": "USD",
+            "category": "Americas",
+            "current_value": 5625.80,
+            "change_pts": 42.30,
+            "day_change_pct": 0.76,
+            "open": 5590.00,
+            "day_high": 5638.00,
+            "day_low": 5585.00,
+            "fifty_two_week_high": 5670.00,
+            "fifty_two_week_low": 4100.00,
+            "sparkline": [5590, 5605, 5618, 5625.8]
+        },
+        {
+            "symbol": "NASDAQ",
+            "name": "Nasdaq Composite",
+            "exchange": "NASDAQ",
+            "country": "USA",
+            "region": "Americas",
+            "currency": "USD",
+            "category": "Americas",
+            "current_value": 17713.70,
+            "change_pts": 210.50,
+            "day_change_pct": 1.20,
+            "open": 17520.00,
+            "day_high": 17780.00,
+            "day_low": 17500.00,
+            "fifty_two_week_high": 18670.00,
+            "fifty_two_week_low": 12500.00,
+            "sparkline": [17520, 17600, 17680, 17713]
+        },
+        {
+            "symbol": "GIFT NIFTY",
+            "name": "Gift Nifty (NSE International)",
+            "exchange": "NSE IX",
+            "country": "India / SG",
+            "region": "Asia-Pacific",
+            "currency": "USD",
+            "category": "Asia-Pacific",
+            "current_value": 24910.00,
+            "change_pts": 155.00,
+            "day_change_pct": 0.63,
+            "open": 24780.00,
+            "day_high": 24940.00,
+            "day_low": 24750.00,
+            "fifty_two_week_high": 26350.00,
+            "fifty_two_week_low": 19700.00,
+            "sparkline": [24780, 24830, 24880, 24910]
+        },
+        {
+            "symbol": "NIKKEI 225",
+            "name": "Nikkei 225 Index",
+            "exchange": "TSE",
+            "country": "Japan",
+            "region": "Asia-Pacific",
+            "currency": "JPY",
+            "category": "Asia-Pacific",
+            "current_value": 38362.50,
+            "change_pts": 320.10,
+            "day_change_pct": 0.84,
+            "open": 38080.00,
+            "day_high": 38450.00,
+            "day_low": 38020.00,
+            "fifty_two_week_high": 42426.00,
+            "fifty_two_week_low": 31000.00,
+            "sparkline": [38080, 38190, 38280, 38362.5]
+        },
+        {
+            "symbol": "FTSE 100",
+            "name": "FTSE 100 Index",
+            "exchange": "LSE",
+            "country": "UK",
+            "region": "Europe",
+            "currency": "GBP",
+            "category": "Europe",
+            "current_value": 8345.20,
+            "change_pts": 28.40,
+            "day_change_pct": 0.34,
+            "open": 8320.00,
+            "day_high": 8360.00,
+            "day_low": 8310.00,
+            "fifty_two_week_high": 8480.00,
+            "fifty_two_week_low": 7250.00,
+            "sparkline": [8320, 8330, 8340, 8345.2]
+        }
+    ]
 
 @router.get("/sectors", response_model=List[SectorMovementItem])
 def get_sector_movements():

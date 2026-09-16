@@ -98,6 +98,8 @@ export interface SwapExecutionPayload {
   alternative_price: number;
 }
 
+export type SwapExecutionRequest = SwapExecutionPayload;
+
 export interface SwapExecutionResponse {
   success: boolean;
   message: string;

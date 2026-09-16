@@ -103,6 +103,70 @@ def get_ipos():
             qib_subscription_x=209.36,
             nii_subscription_x=41.51,
             ai_verdict="SUBSCRIBE (High Listing Gains)"
+        ),
+        IpoItem(
+            company_name="Hexaware Technologies Ltd",
+            symbol="HEXAWARE",
+            status="UPCOMING",
+            price_band="₹680 - ₹720",
+            issue_size_cr=9950.0,
+            lot_size=20,
+            bidding_dates="Oct 10 - Oct 14",
+            gmp_pts=115.0,
+            gmp_pct=15.97,
+            subscription_rate_x=0.0,
+            retail_subscription_x=0.0,
+            qib_subscription_x=0.0,
+            nii_subscription_x=0.0,
+            ai_verdict="SUBSCRIBE (IT Services Re-listing)"
+        ),
+        IpoItem(
+            company_name="NSDL Depositary India Ltd",
+            symbol="NSDL",
+            status="UPCOMING",
+            price_band="₹740 - ₹800",
+            issue_size_cr=4500.0,
+            lot_size=18,
+            bidding_dates="Oct 18 - Oct 22",
+            gmp_pts=210.0,
+            gmp_pct=26.25,
+            subscription_rate_x=0.0,
+            retail_subscription_x=0.0,
+            qib_subscription_x=0.0,
+            nii_subscription_x=0.0,
+            ai_verdict="SUBSCRIBE (Monopoly Financial Infra)"
+        ),
+        IpoItem(
+            company_name="Afcons Infrastructure Ltd",
+            symbol="AFCONS",
+            status="OPEN",
+            price_band="₹440 - ₹463",
+            issue_size_cr=5430.0,
+            lot_size=32,
+            bidding_dates="Sep 28 - Oct 01",
+            gmp_pts=45.0,
+            gmp_pct=9.72,
+            subscription_rate_x=4.15,
+            retail_subscription_x=3.80,
+            qib_subscription_x=5.20,
+            nii_subscription_x=2.90,
+            ai_verdict="SUBSCRIBE (Shapoorji Pallonji Group)"
+        ),
+        IpoItem(
+            company_name="Ola Electric Mobility Ltd",
+            symbol="OLAELEC",
+            status="CLOSED",
+            price_band="₹72 - ₹76",
+            issue_size_cr=6145.0,
+            lot_size=197,
+            bidding_dates="Aug 02 - Aug 06",
+            gmp_pts=9.50,
+            gmp_pct=12.50,
+            subscription_rate_x=4.45,
+            retail_subscription_x=3.92,
+            qib_subscription_x=5.31,
+            nii_subscription_x=2.40,
+            ai_verdict="ACCUMULATE (EV Market Share Leader)"
         )
     ]
 
@@ -204,6 +268,54 @@ def get_bonds():
             face_value=1000.0,
             market_price=1016.0,
             maturity_date="2031-04-10",
+            tax_status="Taxable at slab rate"
+        ),
+        BondItem(
+            bond_name="IRFC 7.55% Tax-Free 2033",
+            category="Corporate Bond",
+            issuer="Indian Railway Finance Corp (PSU)",
+            coupon_rate_pct=7.55,
+            ytm_pct=5.72,
+            rating="CRISIL AAA",
+            face_value=1000.0,
+            market_price=1165.0,
+            maturity_date="2033-03-24",
+            tax_status="100% Tax-Free Interest (Sec 10(15))"
+        ),
+        BondItem(
+            bond_name="PFC 7.60% Tax-Free 2032",
+            category="Corporate Bond",
+            issuer="Power Finance Corp (PSU)",
+            coupon_rate_pct=7.60,
+            ytm_pct=5.80,
+            rating="ICRA AAA",
+            face_value=1000.0,
+            market_price=1152.0,
+            maturity_date="2032-11-12",
+            tax_status="100% Tax-Free Interest (Sec 10(15))"
+        ),
+        BondItem(
+            bond_name="NABARD 7.65% AAA 2030",
+            category="Corporate Bond",
+            issuer="National Bank for Agriculture and Rural Dev",
+            coupon_rate_pct=7.65,
+            ytm_pct=7.35,
+            rating="CRISIL AAA",
+            face_value=10000.0,
+            market_price=10140.0,
+            maturity_date="2030-08-30",
+            tax_status="Taxable at slab rate"
+        ),
+        BondItem(
+            bond_name="L&T Infra Finance 8.20% 2032",
+            category="Corporate Bond",
+            issuer="L&T Infrastructure Finance Co Ltd",
+            coupon_rate_pct=8.20,
+            ytm_pct=7.95,
+            rating="CARE AAA",
+            face_value=1000.0,
+            market_price=1018.0,
+            maturity_date="2032-05-18",
             tax_status="Taxable at slab rate"
         )
     ]
@@ -310,5 +422,71 @@ def get_etfs():
             three_year_cagr_pct=29.60,
             expense_ratio_pct=0.20,
             aum_cr=2400.0
+        ),
+        EtfItem(
+            symbol="PHARMABEES",
+            name="Nippon India Nifty Pharma ETF",
+            category="Sectoral ETF",
+            current_nav=22.80,
+            day_change_pct=0.95,
+            one_year_return_pct=38.50,
+            three_year_cagr_pct=21.20,
+            expense_ratio_pct=0.21,
+            aum_cr=1850.0
+        ),
+        EtfItem(
+            symbol="PSUBANKBEES",
+            name="Nippon India Nifty PSU Bank BeES ETF",
+            category="Sectoral ETF",
+            current_nav=68.90,
+            day_change_pct=2.45,
+            one_year_return_pct=58.40,
+            three_year_cagr_pct=34.10,
+            expense_ratio_pct=0.36,
+            aum_cr=3400.0
+        ),
+        EtfItem(
+            symbol="MID150BEES",
+            name="Nippon India Nifty Midcap 150 ETF",
+            category="Index ETF",
+            current_nav=184.20,
+            day_change_pct=1.30,
+            one_year_return_pct=46.20,
+            three_year_cagr_pct=26.50,
+            expense_ratio_pct=0.15,
+            aum_cr=4800.0
+        ),
+        EtfItem(
+            symbol="LOWVOL150",
+            name="ICICI Prudential Nifty Low Vol 30 ETF",
+            category="Index ETF",
+            current_nav=195.40,
+            day_change_pct=0.65,
+            one_year_return_pct=32.40,
+            three_year_cagr_pct=20.80,
+            expense_ratio_pct=0.25,
+            aum_cr=2100.0
+        ),
+        EtfItem(
+            symbol="ALPHA50",
+            name="Kotak Nifty Alpha 50 ETF",
+            category="Index ETF",
+            current_nav=54.60,
+            day_change_pct=1.85,
+            one_year_return_pct=54.80,
+            three_year_cagr_pct=31.20,
+            expense_ratio_pct=0.30,
+            aum_cr=1650.0
+        ),
+        EtfItem(
+            symbol="HNGSNGBEES",
+            name="Nippon India Hang Seng BeES ETF",
+            category="Global ETF",
+            current_nav=284.10,
+            day_change_pct=-0.40,
+            one_year_return_pct=14.50,
+            three_year_cagr_pct=5.20,
+            expense_ratio_pct=0.65,
+            aum_cr=1200.0
         )
     ]

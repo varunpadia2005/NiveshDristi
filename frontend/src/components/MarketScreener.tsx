@@ -254,6 +254,20 @@ export const MarketScreener: React.FC<MarketScreenerProps> = ({
                         </div>
                       </div>
 
+                      {onOpenAddModalWithTicker && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenAddModalWithTicker(stock.ticker, stock.name, stock.sector, displayPrice);
+                          }}
+                          className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition flex items-center space-x-1 cursor-pointer"
+                          title="Add to Portfolio"
+                        >
+                          <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                          <span>Add</span>
+                        </button>
+                      )}
+
                       {onOpenAiReport && (
                         <button
                           onClick={(e) => {
@@ -409,18 +423,34 @@ export const MarketScreener: React.FC<MarketScreenerProps> = ({
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-end justify-between">
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                   <div>
                     <div className="text-[10px] text-slate-400 font-medium">Price ({activeEx})</div>
                     <div className="font-extrabold text-slate-900 text-sm font-mono">
                       ₹{displayPrice.toLocaleString("en-IN")}
                     </div>
                   </div>
-                  <div className={`text-xs font-bold px-2 py-0.5 rounded-md flex items-center ${
-                    isPositive ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
-                  }`}>
-                    {isPositive ? <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" /> : <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" />}
-                    <span>{isPositive ? "+" : ""}{stock.day_change_pct}%</span>
+                  
+                  <div className="flex items-center space-x-1.5">
+                    <div className={`text-xs font-bold px-2 py-0.5 rounded-md flex items-center ${
+                      isPositive ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
+                    }`}>
+                      {isPositive ? <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" /> : <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" />}
+                      <span>{isPositive ? "+" : ""}{stock.day_change_pct}%</span>
+                    </div>
+
+                    {onOpenAddModalWithTicker && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenAddModalWithTicker(stock.ticker, stock.name, stock.sector, displayPrice);
+                        }}
+                        className="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition cursor-pointer"
+                        title="Add to Portfolio"
+                      >
+                        <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

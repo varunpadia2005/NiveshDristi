@@ -16,7 +16,10 @@ import {
   BarChart3,
   Activity,
   MessageSquare,
-  Sparkles
+  Sparkles,
+  Sun,
+  Moon,
+  Settings
 } from "lucide-react";
 import { triggerBrokerSync, updateRiskProfile } from "@/lib/api";
 
@@ -38,6 +41,9 @@ interface NavbarProps {
   riskScore: number;
   onRefresh: () => void;
   onOpenAddModal: () => void;
+  theme?: "light" | "dark";
+  onToggleTheme?: () => void;
+  onOpenSettings?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -47,6 +53,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   riskScore = 6,
   onRefresh,
   onOpenAddModal,
+  theme = "light",
+  onToggleTheme,
+  onOpenSettings,
 }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [currentBroker, setCurrentBroker] = useState(brokerConnected);
@@ -195,10 +204,36 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={onRefresh}
               disabled={isSyncing}
               title="Refresh live metrics"
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin text-emerald-600" : ""}`} />
             </button>
+
+            {/* Light / Dark Mode Toggle Button */}
+            {onToggleTheme && (
+              <button
+                onClick={onToggleTheme}
+                title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 hover:text-slate-900 transition-colors cursor-pointer"
+              >
+                {theme === "light" ? (
+                  <Moon className="w-4 h-4 text-slate-700 hover:text-indigo-600" />
+                ) : (
+                  <Sun className="w-4 h-4 text-amber-400 fill-amber-400" />
+                )}
+              </button>
+            )}
+
+            {/* Settings Modal Button */}
+            {onOpenSettings && (
+              <button
+                onClick={onOpenSettings}
+                title="Platform Settings"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
 

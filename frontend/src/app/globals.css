@@ -1,24 +1,48 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
   :root {
     --bg-primary: #f8fafc;
     --bg-card: #ffffff;
+    --bg-card-hover: #ffffff;
     --border-card: #e2e8f0;
     --text-primary: #0f172a;
     --text-secondary: #475569;
     --text-muted: #64748b;
   }
 
+  html.dark {
+    --bg-primary: #0b0f19;
+    --bg-card: #111827;
+    --bg-card-hover: #1f2937;
+    --border-card: #1f2937;
+    --text-primary: #f9fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #9ca3af;
+  }
+
   body {
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     min-height: 100vh;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  html:not(.dark) body {
     background-image: 
       radial-gradient(at 15% 10%, rgba(16, 185, 129, 0.04) 0px, transparent 45%),
       radial-gradient(at 85% 15%, rgba(99, 102, 241, 0.05) 0px, transparent 45%),
       radial-gradient(at 50% 90%, rgba(14, 165, 233, 0.04) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  html.dark body {
+    background-image: 
+      radial-gradient(at 15% 10%, rgba(16, 185, 129, 0.08) 0px, transparent 45%),
+      radial-gradient(at 85% 15%, rgba(99, 102, 241, 0.08) 0px, transparent 45%),
+      radial-gradient(at 50% 90%, rgba(14, 165, 233, 0.06) 0px, transparent 50%);
     background-attachment: fixed;
   }
 }
@@ -33,20 +57,33 @@
   background: #f1f5f9;
 }
 
+html.dark ::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 9999px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #374151;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 
-/* Crisp Light Cards */
+/* Crisp Cards */
 .light-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+html.dark .light-card {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
 }
 
 .light-card-hover {
@@ -58,11 +95,22 @@
   transform: translateY(-2px);
 }
 
-/* Financial Badges */
+html.dark .light-card-hover:hover {
+  border-color: #374151;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7);
+}
+
+/* Financial Action Badges */
 .badge-hold {
   background: #ecfdf5;
   color: #059669;
   border: 1px solid #a7f3d0;
+}
+
+html.dark .badge-hold {
+  background: rgba(6, 78, 59, 0.5);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .badge-sell {
@@ -71,10 +119,22 @@
   border: 1px solid #fecaca;
 }
 
+html.dark .badge-sell {
+  background: rgba(127, 29, 29, 0.5);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
 .badge-swap {
   background: #fffbeb;
   color: #d97706;
   border: 1px solid #fde68a;
+}
+
+html.dark .badge-swap {
+  background: rgba(120, 53, 15, 0.5);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.4);
 }
 
 /* Micro Animations */

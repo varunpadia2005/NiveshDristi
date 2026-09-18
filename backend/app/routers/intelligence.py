@@ -26,6 +26,12 @@ from app.engine.market_data import (
     fetch_stock_history
 )
 from app.engine.indicators import compute_technical_metrics
+from app.engine.rag_knowledge import (
+    search_knowledge_base,
+    get_knowledge_stats,
+    trigger_incremental_training
+)
+from app.engine.rag import compute_multi_factor_score
 import pandas as pd
 import numpy as np
 
@@ -384,6 +390,16 @@ def get_options_screener() -> List[OptionSetupItem]:
 
     return setups
 
+@router.get("/knowledge-stats")
+def get_rag_knowledge_stats():
+    """Returns dataset training telemetry and RAG model metrics."""
+    return get_knowledge_stats()
+
+@router.post("/train-rag")
+def trigger_rag_training():
+    """Triggers incremental dataset training and vector embedding index update."""
+    return trigger_incremental_training()
+
 @router.get("/ai-track-record")
 def get_ai_track_record():
     """Returns backtested performance track record for NiveshDristi AI Recommendations."""
@@ -482,19 +498,25 @@ def ai_chat_advisor(
     holdings = db.query(PortfolioHolding).filter(PortfolioHolding.is_active == True).all()
     holding_tickers = [str(h.ticker).upper() for h in holdings]
     
+    # Query RAG Vector Knowledge Store for semantic context
+    kb_chunks = search_knowledge_base(last_user_msg, top_k=1)
+    kb_note = f"\n\n🧠 **RAG Vector Knowledge Context**: *{kb_chunks[0]['title']}* - {kb_chunks[0]['content']}" if kb_chunks else ""
+
     # Identify referenced tickers from universe
     referenced_stocks = []
     for s in INDIAN_STOCKS_UNIVERSE:
-        t_clean = s["ticker"].replace(".NS", "").replace(".BO", "").lower()
-        if t_clean in query_lower or s["name"].lower() in query_lower or s["ticker"].lower() in query_lower:
-            referenced_stocks.append(s["ticker"])
+        t_ticker = str(s["ticker"])
+        t_name = str(s["name"])
+        t_clean = t_ticker.replace(".NS", "").replace(".BO", "").lower()
+        if t_clean in query_lower or t_name.lower() in query_lower or t_ticker.lower() in query_lower:
+            referenced_stocks.append(t_ticker)
 
     # 1. Specific Stock Inquiry
     if referenced_stocks or any(t in query_lower for t in ["reliance", "tcs", "infy", "hdfc", "tata", "suzlon", "zomato", "itc", "sbi"]):
-        matched_ticker = referenced_stocks[0] if referenced_stocks else "RELIANCE.NS"
+        matched_ticker = str(referenced_stocks[0]) if referenced_stocks else "RELIANCE.NS"
         meta = get_stock_metadata(matched_ticker)
         quote = get_live_stock_quote(meta)
-        curr_p = quote["current_price"]
+        curr_p = float(quote["current_price"])
         
         try:
             metrics = compute_technical_metrics(matched_ticker)
@@ -525,7 +547,7 @@ def ai_chat_advisor(
             f"- **Medium-Term (6-12M)**: ₹{med_target:,.2f} (+18.0%)\n"
             f"- **Recommended Stop Loss**: ₹{stop_loss:,.2f} ({(stop_loss/curr_p - 1)*100:.1f}% risk buffer)\n\n"
             f"💡 **AI Verdict**: {badge} stance is supported by {meta['sector']} sector trends and moving average alignment. "
-            f"You can open the **AI Stock Analyst Report** in NiveshDristi for a full institutional breakdown."
+            f"You can open the **AI Stock Analyst Report** in NiveshDristi for a full institutional breakdown.{kb_note}"
         )
 
         return AiChatResponse(
@@ -857,13 +879,16 @@ def get_ai_stock_analyst_report(ticker: str):
             impact="BEARISH"
         ))
 
-    # 5. Executive Summary & Strategy
+    # 5. Executive Summary & Strategy with RAG Vector Knowledge Retrieval
+    kb_res = search_knowledge_base(f"{clean_ticker} {meta['name']} {meta['sector']}", top_k=1)
+    kb_insight = f"\n\n🧠 **Vector RAG Insight**: {kb_res[0]['content']}" if kb_res else ""
+
     summary = (
         f"{meta['name']} ({meta['ticker']}) is currently trading at ₹{curr_price:,.2f}, positioned with an overall "
         f"algorithmic evaluation score of {composite_score:+.2f} / 5.0. Based on multi-timeframe moving averages, "
         f"MACD histogram indicators, and FinBERT institutional news sentiment, our AI engine assigns a **{verdict}** recommendation. "
         f"The stock offers an attractive medium-term upside potential of {upside_pct:+.1f}% targeting ₹{target_medium:,.2f}, "
-        f"with a disciplined stop loss anchored at ₹{stop_loss:,.2f} maintaining a favorable {rr_ratio} risk-to-reward profile."
+        f"with a disciplined stop loss anchored at ₹{stop_loss:,.2f} maintaining a favorable {rr_ratio} risk-to-reward profile.{kb_insight}"
     )
 
     entry_range = f"₹{round(curr_price * 0.985, 2)} - ₹{round(curr_price * 1.01, 2)}"

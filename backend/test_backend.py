@@ -131,7 +131,30 @@ def test_full_suite():
     assert len(options) > 0
     print(f"✔ 17. Testing Options Screener (RSI-based Call/Put setups)")
 
+    # 18. AI Dataset Knowledge Stats & Training
+    r_stats = client.get("/api/intelligence/knowledge-stats")
+    assert r_stats.status_code == 200, f"Knowledge stats failed: {r_stats.text}"
+    stats = r_stats.json()
+    assert stats["total_indexed_records"] >= 10000000
+    print(f"✔ 18. Testing AI Knowledge Stats ({stats['total_indexed_records']:,} Indexed Records)")
+
+    # 19. AI Model Dataset Training
+    r_train = client.post("/api/intelligence/train-rag?batch_size=1000000")
+    assert r_train.status_code == 200, f"Train RAG failed: {r_train.text}"
+    train_res = r_train.json()
+    assert train_res["status"] == "SUCCESS"
+    assert train_res["batch_records_added"] == 1000000
+    print(f"✔ 19. Testing AI Dataset Training (+1,000,000 Records Batch)")
+
+    # 20. AI Performance Track Record
+    r_rec = client.get("/api/intelligence/ai-track-record")
+    assert r_rec.status_code == 200, f"Track record failed: {r_rec.text}"
+    rec = r_rec.json()
+    assert rec["target_met_rate_pct"] >= 90.0
+    print(f"✔ 20. Testing AI Accuracy Track Record ({rec['target_met_rate_pct']}% Target Precision)")
+
     print("================ ALL BACKEND TESTS PASSED WITH 100% SUCCESS! ================")
 
 if __name__ == "__main__":
     test_full_suite()
+

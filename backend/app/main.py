@@ -14,7 +14,8 @@ from app.routers import (
     discovery, 
     intelligence,
     auth,
-    dashboard
+    dashboard,
+    stock_api_v1
 )
 
 # Create Database Tables
@@ -47,6 +48,7 @@ app.include_router(markets.router, prefix=settings.API_V1_STR)
 app.include_router(indices.router, prefix=settings.API_V1_STR)
 app.include_router(discovery.router, prefix=settings.API_V1_STR)
 app.include_router(intelligence.router, prefix=settings.API_V1_STR)
+app.include_router(stock_api_v1.router, prefix=settings.API_V1_STR)
 
 @app.on_event("startup")
 def startup_db_seed():

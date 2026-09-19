@@ -6,7 +6,7 @@ from app.database import get_db
 from app.models import PortfolioHolding, UserProfile
 from app.schemas import (
     HoldingCreate, HoldingResponse, PortfolioSummary, SectorExposure,
-    SwapExecutionRequest, SwapExecutionResponse
+    SwapExecutionRequest, SwapExecutionResponse, CustomPortfolioSeedRequest, CustomHoldingItem
 )
 from app.engine.broker_sync import sync_broker_portfolio
 from app.engine.market_data import get_latest_price
@@ -268,3 +268,50 @@ def delete_holding(holding_id: int, user_id: int = 1, db: Session = Depends(get_
     db.delete(holding)
     db.commit()
     return {"message": f"Successfully deleted holding {holding_id}"}
+
+@router.post("/custom-seed", response_model=List[HoldingResponse])
+def seed_custom_portfolio(payload: CustomPortfolioSeedRequest, db: Session = Depends(get_db)):
+    """
+    Clears existing active holdings for the user and seeds a user-created custom portfolio
+    with exact tickers, buy prices, and quantities.
+    """
+    user_id = payload.user_id or 1
+    
+    # 1. Update user broker_connected name
+    user = db.query(UserProfile).filter(UserProfile.id == user_id).first()
+    if user:
+        user.broker_connected = payload.portfolio_name or payload.broker_name or "Custom Admin Portfolio"
+        db.commit()
+    
+    # 2. Deactivate existing holdings for this user
+    db.query(PortfolioHolding).filter(PortfolioHolding.user_id == user_id).update({"is_active": False})
+    db.commit()
+    
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    
+    # 3. Add custom holdings
+    for item in payload.holdings:
+        curr_p = get_latest_price(item.ticker)
+        mkt_val = item.quantity * curr_p
+        cost = item.quantity * item.average_buy_price
+        pnl = mkt_val - cost
+        pnl_pct = (pnl / cost * 100.0) if cost > 0 else 0.0
+        
+        new_holding = PortfolioHolding(
+            user_id=user_id,
+            ticker=item.ticker.upper(),
+            symbol_name=item.symbol_name,
+            sector=item.sector or "Equities",
+            quantity=item.quantity,
+            average_buy_price=item.average_buy_price,
+            purchase_date=item.purchase_date or today_str,
+            current_price=curr_p,
+            market_value=round(mkt_val, 2),
+            pnl=round(pnl, 2),
+            pnl_percentage=round(pnl_pct, 2),
+            is_active=True
+        )
+        db.add(new_holding)
+    
+    db.commit()
+    return get_user_holdings(user_id=user_id, db=db)

@@ -564,7 +564,7 @@ export interface AiStockAnalystReport {
 // -------------------------------------------------------------
 // User Authentication & Persona Profile Types
 // -------------------------------------------------------------
-export type UserPersonaType = "RETAIL_INVESTOR" | "PRO_TRADER" | "WEALTH_MANAGER" | "INSTITUTIONAL_ANALYST";
+export type UserPersonaType = "RETAIL_INVESTOR" | "PRO_TRADER" | "WEALTH_MANAGER" | "INSTITUTIONAL_ANALYST" | "ADMIN";
 
 export interface UserProfile {
   id: number;

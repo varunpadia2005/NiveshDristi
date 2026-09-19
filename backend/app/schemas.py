@@ -45,6 +45,22 @@ class AuthResponse(BaseModel):
     user: UserProfileResponse
 
 
+# Custom Portfolio Seed Schemas
+class CustomHoldingItem(BaseModel):
+    ticker: str
+    symbol_name: str
+    sector: str = "Equities"
+    quantity: float
+    average_buy_price: float
+    purchase_date: Optional[str] = None
+
+class CustomPortfolioSeedRequest(BaseModel):
+    user_id: Optional[int] = 1
+    portfolio_name: str = "My Custom Admin Portfolio"
+    broker_name: Optional[str] = "Custom Admin Portfolio"
+    holdings: List[CustomHoldingItem]
+
+
 # Portfolio Holdings
 class HoldingBase(BaseModel):
     ticker: str
@@ -222,6 +238,14 @@ class StockScreenerItem(BaseModel):
     ltp: Optional[float] = None
     changePct: Optional[float] = None
     marketCap: Optional[float] = None
+
+class StockMasterListResponse(BaseModel):
+    total_count: int
+    exchange_filter: str
+    cap_type_filter: str
+    limit: int
+    offset: int
+    stocks: List[StockScreenerItem]
 
 class TopMoversResponse(BaseModel):
     largecap_gainers: List[StockScreenerItem]

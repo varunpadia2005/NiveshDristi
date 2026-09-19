@@ -53,6 +53,14 @@ DEMO_PERSONAS = {
         "risk_score": 8,
         "broker_connected": "Bloomberg Terminal Sync",
         "avatar_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150"
+    },
+    "ADMIN": {
+        "full_name": "System Administrator",
+        "email": "admin@niveshdristi.in",
+        "user_type": "ADMIN",
+        "risk_score": 10,
+        "broker_connected": "Master Multi-Broker Gateway",
+        "avatar_url": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
     }
 }
 
@@ -174,3 +182,70 @@ def get_current_user_profile(user_id: int = 1, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User profile not found")
     return user
+
+@router.get("/admin/auth-types")
+def get_admin_auth_types():
+    """
+    Returns an institutional breakdown of all supported authentication protocols,
+    OAuth broker tokens, JWT configurations, and security credentials across NiveshDristi.
+    """
+    return {
+        "system_status": "ONLINE",
+        "total_active_auth_nodes": 6,
+        "auth_methods": [
+            {
+                "id": "OAUTH_ZERODHA",
+                "name": "Zerodha Kite Connect OAuth 2.0",
+                "protocol": "OAuth2.0 PKCE",
+                "status": "ACTIVE_CONNECTED",
+                "active_sessions": 1420,
+                "token_expiry": "24 hours",
+                "permissions": ["Read Holdings", "Read Orders", "Place Orders", "Level-2 Quotes"]
+            },
+            {
+                "id": "OAUTH_UPSTOX",
+                "name": "Upstox Pro API v2 OAuth",
+                "protocol": "OAuth2.0 Bearer",
+                "status": "ACTIVE_CONNECTED",
+                "active_sessions": 850,
+                "token_expiry": "24 hours",
+                "permissions": ["Read Positions", "Historical Data", "Option Chain Feed"]
+            },
+            {
+                "id": "OAUTH_GROWW",
+                "name": "Groww Passwordless Session Auth",
+                "protocol": "JWT Cookie + TOTP",
+                "status": "ACTIVE_CONNECTED",
+                "active_sessions": 3200,
+                "token_expiry": "7 days",
+                "permissions": ["Portfolio Sync", "SIP Tracker", "Tax P&L"]
+            },
+            {
+                "id": "JWT_USER_AUTH",
+                "name": "NiveshDristi Internal JWT User Auth",
+                "protocol": "RS256 Bearer Token",
+                "status": "ACTIVE_CONNECTED",
+                "active_sessions": 8641,
+                "token_expiry": "30 days",
+                "permissions": ["Multi-Persona Access", "Custom Portfolio Engine", "AI RAG Copilot"]
+            },
+            {
+                "id": "ALGO_API_KEY",
+                "name": "Algo Trader REST & WebSocket API Key",
+                "protocol": "X-API-KEY / HMAC-SHA256",
+                "status": "ACTIVE_CONNECTED",
+                "active_sessions": 94,
+                "token_expiry": "Permanent / Revokable",
+                "permissions": ["Sub-50ms Tick Stream", "Backtest Sandbox", "Order Execution"]
+            },
+            {
+                "id": "ADMIN_SUPERUSER",
+                "name": "System Administrator Auth Portal",
+                "protocol": "Master Secret Key + DB Control",
+                "status": "SUPERUSER_ACCESS",
+                "active_sessions": 1,
+                "token_expiry": "Unlimited",
+                "permissions": ["All Auth Management", "Add Custom Portfolio", "Global Stock Registry Control"]
+            }
+        ]
+    }

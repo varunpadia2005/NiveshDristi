@@ -31,6 +31,7 @@ import { AiStockAnalystModal } from "@/components/AiStockAnalystModal";
 import { AiChatAdvisor } from "@/components/AiChatAdvisor";
 import { SettingsModal, SettingsState } from "@/components/SettingsModal";
 import { GrowwRightSidebarNav } from "@/dashboard/GrowwRightSidebarNav";
+import PersonalApiDocsView from "@/components/PersonalApiDocsView";
 
 import { 
   Sparkles, 
@@ -197,6 +198,7 @@ export default function DashboardPage() {
         theme={settings.theme}
         onToggleTheme={() => handleToggleTheme()}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenStockDetail={(t) => setSelectedTickerForDetail(t)}
       />
 
       {/* Main Container */}
@@ -343,6 +345,11 @@ export default function DashboardPage() {
             {proSubTab === "accuracy" && <AiAccuracyTracker />}
 
           </div>
+        )}
+
+        {/* 9. PERSONAL STOCK API DOCS & TESTER TAB */}
+        {activeTab === "api-docs" && (
+          <PersonalApiDocsView />
         )}
 
       </main>

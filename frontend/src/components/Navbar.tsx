@@ -19,9 +19,11 @@ import {
   Sparkles,
   Sun,
   Moon,
+  Code2,
   Settings
 } from "lucide-react";
-import { triggerBrokerSync, updateRiskProfile } from "@/lib/api";
+import { triggerBrokerSync, updateRiskProfile, searchStocks } from "@/lib/api";
+import { StockSearchResult } from "@/types";
 
 export type NavTab = 
   | "portfolio" 
@@ -32,7 +34,8 @@ export type NavTab =
   | "bonds" 
   | "etfs" 
   | "intelligence" 
-  | "backtest";
+  | "backtest"
+  | "api-docs";
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -41,6 +44,7 @@ interface NavbarProps {
   riskScore: number;
   onRefresh: () => void;
   onOpenAddModal: () => void;
+  onOpenStockDetail?: (ticker: string) => void;
   theme?: "light" | "dark";
   onToggleTheme?: () => void;
   onOpenSettings?: () => void;
@@ -53,6 +57,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   riskScore = 6,
   onRefresh,
   onOpenAddModal,
+  onOpenStockDetail,
   theme = "light",
   onToggleTheme,
   onOpenSettings,
@@ -61,6 +66,32 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [currentBroker, setCurrentBroker] = useState(brokerConnected);
   const [currentRisk, setCurrentRisk] = useState(riskScore);
   const [isRiskMenuOpen, setIsRiskMenuOpen] = useState(false);
+
+  // Top Navbar Quick Search State
+  const [navQuery, setNavQuery] = useState("");
+  const [navResults, setNavResults] = useState<StockSearchResult[]>([]);
+  const [isNavSearching, setIsNavSearching] = useState(false);
+  const [showNavDropdown, setShowNavDropdown] = useState(false);
+
+  const handleNavSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setNavQuery(val);
+    if (!val.trim()) {
+      setNavResults([]);
+      setShowNavDropdown(false);
+      return;
+    }
+    setIsNavSearching(true);
+    setShowNavDropdown(true);
+    try {
+      const res = await searchStocks(val);
+      setNavResults(res);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsNavSearching(false);
+    }
+  };
 
   const handleBrokerChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newBroker = e.target.value;
@@ -94,6 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: "advisor", label: "AI Advisor", icon: <Sparkles className="w-4 h-4 text-emerald-500" />, badge: "Chat" },
     { id: "intelligence", label: "Pro Analytics", icon: <BrainCircuit className="w-4 h-4 text-amber-500" />, badge: "5 Tools" },
     { id: "backtest", label: "Backtest", icon: <BarChart3 className="w-4 h-4" /> },
+    { id: "api-docs", label: "Stock API", icon: <Code2 className="w-4 h-4 text-sky-500" />, badge: "REST" },
   ];
 
   return (
@@ -122,6 +154,65 @@ export const Navbar: React.FC<NavbarProps> = ({
                 Intelligent Portfolio & Market Co-Pilot
               </p>
             </div>
+          </div>
+
+          {/* Top Global Stock Search Bar with Search Icon */}
+          <div className="relative hidden md:block w-64 lg:w-80">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <Search className="w-4 h-4 text-emerald-600" />
+              </div>
+              <input
+                type="text"
+                value={navQuery}
+                onChange={handleNavSearchChange}
+                onFocus={() => navQuery.trim() && setShowNavDropdown(true)}
+                placeholder="Search 8,641+ stocks (Tata, TCS, 500570)..."
+                className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-xs font-semibold text-slate-900 outline-none transition-all"
+              />
+              {isNavSearching && (
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <div className="w-3.5 h-3.5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
+
+            {/* Floating Navbar Search Results Dropdown */}
+            {showNavDropdown && navResults.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden text-left divide-y divide-slate-100 max-h-80 overflow-y-auto z-50 animate-in fade-in duration-100">
+                {navResults.map((stock) => {
+                  const isPositive = stock.day_change_pct >= 0;
+                  return (
+                    <div
+                      key={stock.ticker}
+                      className="p-2.5 hover:bg-slate-50 flex items-center justify-between cursor-pointer transition-colors"
+                      onClick={() => {
+                        setShowNavDropdown(false);
+                        setNavQuery("");
+                        if (onOpenStockDetail) onOpenStockDetail(stock.ticker);
+                        else onSelectTab("screener");
+                      }}
+                    >
+                      <div>
+                        <div className="font-bold text-slate-900 text-xs flex items-center space-x-1.5">
+                          <span>{stock.name}</span>
+                          {stock.bse_only && <span className="text-[8px] font-black px-1.5 py-0.2 rounded bg-purple-100 text-purple-900">BSE</span>}
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-mono">
+                          {stock.ticker} {stock.bse_code ? `(#${stock.bse_code})` : ""}
+                        </div>
+                      </div>
+                      <div className="text-right font-mono text-xs font-bold">
+                        <div>₹{stock.current_price.toLocaleString("en-IN")}</div>
+                        <div className={`text-[10px] ${isPositive ? "text-emerald-600" : "text-rose-600"}`}>
+                          {isPositive ? "+" : ""}{stock.day_change_pct}%
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Quick Actions & Controls */}

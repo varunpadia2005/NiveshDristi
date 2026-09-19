@@ -57,7 +57,7 @@ export const IndicesSection: React.FC = () => {
   const currentList = activeTab === "indian" ? indianIndices : globalIndices;
 
   // Filter categories
-  const indianCategories = ["ALL", "Broad Market", "Sectoral", "Market Cap", "Volatility"];
+  const indianCategories = ["ALL", "Broad Market", "Sectoral", "Market Cap", "Thematic", "Strategy", "Volatility"];
   const globalCategories = ["ALL", "Americas", "Asia-Pacific", "Europe"];
   const currentCategories = activeTab === "indian" ? indianCategories : globalCategories;
 

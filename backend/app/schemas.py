@@ -2,7 +2,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 from datetime import datetime
 
-# User Profile
+# User Profile & Auth
 class UserProfileBase(BaseModel):
     full_name: str
     risk_score: int
@@ -14,9 +14,36 @@ class UserRiskProfileUpdate(BaseModel):
 
 class UserProfileResponse(UserProfileBase):
     id: int
+    email: str
+    user_type: str = "RETAIL_INVESTOR"
+    avatar_url: Optional[str] = None
     created_at: datetime
+    last_login: Optional[datetime] = None
     class Config:
         from_attributes = True
+
+class UserLoginRequest(BaseModel):
+    email: str
+    password: str
+
+class UserSignupRequest(BaseModel):
+    full_name: str
+    email: str
+    password: str
+    user_type: Optional[str] = "RETAIL_INVESTOR" # RETAIL_INVESTOR, PRO_TRADER, WEALTH_MANAGER, INSTITUTIONAL_ANALYST
+    risk_score: Optional[int] = 6
+    broker_connected: Optional[str] = "Zerodha Kite"
+
+class DemoLoginRequest(BaseModel):
+    user_type: str = "RETAIL_INVESTOR" # RETAIL_INVESTOR, PRO_TRADER, WEALTH_MANAGER, INSTITUTIONAL_ANALYST
+
+class AuthResponse(BaseModel):
+    status: str = "SUCCESS"
+    message: str
+    access_token: str
+    token_type: str = "bearer"
+    user: UserProfileResponse
+
 
 # Portfolio Holdings
 class HoldingBase(BaseModel):
@@ -189,6 +216,12 @@ class StockScreenerItem(BaseModel):
     bse_only: bool = False
     bse_price: Optional[float] = None
     nse_price: Optional[float] = None
+    # Dual-naming compatibility fields
+    symbol: Optional[str] = None
+    companyName: Optional[str] = None
+    ltp: Optional[float] = None
+    changePct: Optional[float] = None
+    marketCap: Optional[float] = None
 
 class TopMoversResponse(BaseModel):
     largecap_gainers: List[StockScreenerItem]
@@ -225,6 +258,10 @@ class MarketIndexItem(BaseModel):
     fifty_two_week_high: float
     fifty_two_week_low: float
     sparkline: List[float]
+    # Dual-naming compatibility fields
+    indexName: Optional[str] = None
+    change: Optional[float] = None
+    changePct: Optional[float] = None
 
 # Discovery: IPOs, Bonds, ETFs
 class IpoItem(BaseModel):
@@ -242,6 +279,14 @@ class IpoItem(BaseModel):
     qib_subscription_x: float
     nii_subscription_x: float
     ai_verdict: str
+    # Dual-naming compatibility fields
+    companyName: Optional[str] = None
+    issuePriceBand: Optional[str] = None
+    issueOpenDate: Optional[str] = None
+    issueCloseDate: Optional[str] = None
+    lotSize: Optional[int] = None
+    listingDate: Optional[str] = None
+    subscriptionStatus: Optional[str] = None
 
 class BondItem(BaseModel):
     bond_name: str
@@ -254,6 +299,15 @@ class BondItem(BaseModel):
     market_price: float
     maturity_date: str
     tax_status: str
+    # Dual-naming compatibility fields
+    symbol: Optional[str] = None
+    isin: Optional[str] = None
+    name: Optional[str] = None
+    couponRate: Optional[float] = None
+    maturityDate: Optional[str] = None
+    ytm: Optional[float] = None
+    faceValue: Optional[float] = None
+    ltp: Optional[float] = None
 
 class EtfItem(BaseModel):
     symbol: str
@@ -265,6 +319,12 @@ class EtfItem(BaseModel):
     three_year_cagr_pct: float
     expense_ratio_pct: float
     aum_cr: float
+    # Dual-naming compatibility fields
+    underlyingAsset: Optional[str] = None
+    nav: Optional[float] = None
+    ltp: Optional[float] = None
+    changePct: Optional[float] = None
+    aum: Optional[float] = None
 
 # Pro Intelligence Features
 class StressTestHoldingResult(BaseModel):

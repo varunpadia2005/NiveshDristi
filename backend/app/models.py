@@ -10,9 +10,13 @@ class UserProfile(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     full_name: Mapped[str] = mapped_column(String, default="Retail Investor")
     email: Mapped[str] = mapped_column(String, unique=True, index=True, default="user@niveshdristi.in")
-    risk_score: Mapped[int] = mapped_column(Integer, default=6)  # 1 (Most Conservative) to 10 (High Aggressive)
-    broker_connected: Mapped[str] = mapped_column(String, default="Zerodha Kite") # 'Zerodha Kite', 'Upstox', 'Direct'
+    hashed_password: Mapped[str] = mapped_column(String, default="demo123")
+    user_type: Mapped[str] = mapped_column(String, default="RETAIL_INVESTOR")  # RETAIL_INVESTOR, PRO_TRADER, WEALTH_MANAGER, INSTITUTIONAL_ANALYST
+    risk_score: Mapped[int] = mapped_column(Integer, default=6)  # 1 (Conservative) to 10 (Aggressive)
+    broker_connected: Mapped[str] = mapped_column(String, default="Zerodha Kite") # Zerodha Kite, Upstox, Direct
+    avatar_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    last_login: Mapped[Optional[datetime]] = mapped_column(DateTime, default=datetime.utcnow)
 
     holdings: Mapped[List["PortfolioHolding"]] = relationship("PortfolioHolding", back_populates="user", cascade="all, delete-orphan")
 

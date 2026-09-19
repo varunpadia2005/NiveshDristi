@@ -560,3 +560,47 @@ export interface AiStockAnalystReport {
   entry_range: string;
   target_exit_strategy: string;
 }
+
+// -------------------------------------------------------------
+// User Authentication & Persona Profile Types
+// -------------------------------------------------------------
+export type UserPersonaType = "RETAIL_INVESTOR" | "PRO_TRADER" | "WEALTH_MANAGER" | "INSTITUTIONAL_ANALYST";
+
+export interface UserProfile {
+  id: number;
+  full_name: string;
+  email: string;
+  user_type: UserPersonaType;
+  risk_score: number;
+  broker_connected: string;
+  avatar_url?: string;
+  created_at: string;
+  last_login?: string;
+}
+
+export interface UserLoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface UserSignupRequest {
+  full_name: string;
+  email: string;
+  password: string;
+  user_type?: UserPersonaType;
+  risk_score?: number;
+  broker_connected?: string;
+}
+
+export interface DemoLoginRequest {
+  user_type: UserPersonaType;
+}
+
+export interface AuthResponse {
+  status: string;
+  message: string;
+  access_token: string;
+  token_type: string;
+  user: UserProfile;
+}
+

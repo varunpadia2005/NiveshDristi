@@ -153,8 +153,49 @@ def test_full_suite():
     assert rec["target_met_rate_pct"] >= 90.0
     print(f"✔ 20. Testing AI Accuracy Track Record ({rec['target_met_rate_pct']}% Target Precision)")
 
-    print("================ ALL BACKEND TESTS PASSED WITH 100% SUCCESS! ================")
+    # 21. User Demo One-Click Login Personas
+    for persona in ["RETAIL_INVESTOR", "PRO_TRADER", "WEALTH_MANAGER", "INSTITUTIONAL_ANALYST"]:
+        r_demo = client.post("/api/auth/demo-login", json={"user_type": persona})
+        assert r_demo.status_code == 200, f"Demo login failed for {persona}: {r_demo.text}"
+        demo_res = r_demo.json()
+        assert demo_res["status"] == "SUCCESS"
+        assert demo_res["user"]["user_type"] == persona
+    print("✔ 21. Testing One-Click Login Personas (Retail, Pro Trader, Wealth Manager, Quant)")
+
+    # 22. User Custom Registration (Signup)
+    test_email = f"test_{os.urandom(4).hex()}@niveshdristi.in"
+    r_signup = client.post("/api/auth/signup", json={
+        "full_name": "Test Trader",
+        "email": test_email,
+        "password": "Password123!",
+        "user_type": "PRO_TRADER",
+        "risk_score": 8,
+        "broker_connected": "Upstox Pro"
+    })
+    assert r_signup.status_code == 200, f"Signup failed: {r_signup.text}"
+    signup_res = r_signup.json()
+    assert signup_res["user"]["email"] == test_email
+    print(f"✔ 22. Testing User Registration & SQLite DB Persistence ({test_email})")
+
+    # 23. User Login
+    r_login = client.post("/api/auth/login", json={
+        "email": test_email,
+        "password": "Password123!"
+    })
+    assert r_login.status_code == 200, f"Login failed: {r_login.text}"
+    login_res = r_login.json()
+    assert login_res["access_token"].startswith("niveshdristi_token_")
+    print("✔ 23. Testing User Authentication & Token Generation")
+
+    # 24. Active User Profile Fetch (/api/auth/me)
+    r_me = client.get(f"/api/auth/me?user_id={login_res['user']['id']}")
+    assert r_me.status_code == 200, f"Fetch profile failed: {r_me.text}"
+    assert r_me.json()["email"] == test_email
+    print("✔ 24. Testing Fetch Active User Profile (/api/auth/me)")
+
+    print("================ ALL 24 BACKEND TESTS PASSED WITH 100% SUCCESS! ================")
 
 if __name__ == "__main__":
     test_full_suite()
+
 

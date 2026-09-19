@@ -89,12 +89,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navItems: { id: NavTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     { id: "portfolio", label: "Dashboard", icon: <PieChart className="w-4 h-4" /> },
-    { id: "screener", label: "Stock Screener", icon: <Search className="w-4 h-4" /> },
     { id: "advisor", label: "AI Advisor", icon: <Sparkles className="w-4 h-4 text-emerald-500" />, badge: "Chat" },
     { id: "indices", label: "Indices", icon: <Activity className="w-4 h-4" />, badge: "Live" },
-    { id: "ipos", label: "IPOs", icon: <Rocket className="w-4 h-4" />, badge: "GMP" },
-    { id: "bonds", label: "Bonds & SGB", icon: <Landmark className="w-4 h-4" /> },
-    { id: "etfs", label: "ETFs", icon: <Layers className="w-4 h-4" /> },
     { id: "intelligence", label: "Pro Analytics", icon: <BrainCircuit className="w-4 h-4 text-amber-500" />, badge: "5 Tools" },
     { id: "backtest", label: "Backtest", icon: <BarChart3 className="w-4 h-4" /> },
   ];
@@ -234,6 +230,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <Settings className="w-4 h-4" />
               </button>
             )}
+
+            {/* Auth Portal Link */}
+            <a
+              href="/auth"
+              title="Authentication & User Persona Portal"
+              className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors shadow-xs"
+            >
+              <span>Auth Portal</span>
+            </a>
+
           </div>
         </div>
 

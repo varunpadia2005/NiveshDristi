@@ -242,14 +242,18 @@ def get_live_index_quote(index_dict: Dict) -> Dict:
                 return {
                     "symbol": index_dict["symbol"],
                     "name": index_dict["name"],
+                    "indexName": index_dict["name"],
                     "exchange": index_dict.get("exchange", "NSE"),
                     "country": index_dict.get("country", "India"),
-                    "region": index_dict.get("region", "Asia-Pacific"),
+                    "region": index_dict.get("region", "Indian" if index_dict.get("exchange") in ["NSE", "BSE"] else "Global"),
                     "currency": index_dict.get("currency", "INR"),
                     "category": index_dict.get("category", "Broad Market"),
                     "current_value": round(cur_val, 2),
+                    "currentValue": round(cur_val, 2),
                     "change_pts": chg_pts,
+                    "change": chg_pts,
                     "day_change_pct": chg_pct,
+                    "changePct": chg_pct,
                     "open": op,
                     "day_high": hi,
                     "day_low": lo,
@@ -264,14 +268,18 @@ def get_live_index_quote(index_dict: Dict) -> Dict:
     return {
         "symbol": index_dict["symbol"],
         "name": index_dict["name"],
+        "indexName": index_dict["name"],
         "exchange": index_dict.get("exchange", "NSE"),
         "country": index_dict.get("country", "India"),
-        "region": index_dict.get("region", "Asia-Pacific"),
+        "region": index_dict.get("region", "Indian" if index_dict.get("exchange") in ["NSE", "BSE"] else "Global"),
         "currency": index_dict.get("currency", "INR"),
         "category": index_dict.get("category", "Broad Market"),
         "current_value": metrics["current_value"],
+        "currentValue": metrics["current_value"],
         "change_pts": metrics["change_pts"],
+        "change": metrics["change_pts"],
         "day_change_pct": metrics["day_change_pct"],
+        "changePct": metrics["day_change_pct"],
         "open": metrics["open"],
         "day_high": metrics["day_high"],
         "day_low": metrics["day_low"],
@@ -339,12 +347,16 @@ def get_live_stock_quote(stock_dict: Dict) -> Dict:
 
             data = {
                 "ticker": ticker,
+                "symbol": ticker.replace(".NS", "").replace(".BO", ""),
                 "name": stock_dict.get("name", ticker),
+                "companyName": stock_dict.get("name", ticker),
                 "sector": stock_dict.get("sector", "Equities"),
                 "cap_type": stock_dict.get("cap_type", "midcap"),
                 "current_price": round(last_p, 2),
+                "ltp": round(last_p, 2),
                 "change_pts": change_pts,
                 "day_change_pct": day_change_pct,
+                "changePct": day_change_pct,
                 "open": open_p,
                 "day_high": high_p,
                 "day_low": low_p,
@@ -352,6 +364,7 @@ def get_live_stock_quote(stock_dict: Dict) -> Dict:
                 "fifty_two_week_high": round(stock_dict.get("fifty_two_week_high", last_p * 1.25), 2),
                 "fifty_two_week_low": round(stock_dict.get("fifty_two_week_low", last_p * 0.75), 2),
                 "market_cap_cr": stock_dict.get("market_cap_cr", 25000),
+                "marketCap": stock_dict.get("market_cap_cr", 25000),
                 "pe_ratio": stock_dict.get("pe_ratio", 25.0),
                 "beta": stock_dict.get("beta", 1.05),
                 "bse_code": bse_code,
@@ -391,12 +404,16 @@ def get_live_stock_quote(stock_dict: Dict) -> Dict:
 
     data = {
         "ticker": ticker,
+        "symbol": ticker.replace(".NS", "").replace(".BO", ""),
         "name": stock_dict["name"],
+        "companyName": stock_dict["name"],
         "sector": stock_dict["sector"],
         "cap_type": stock_dict["cap_type"],
         "current_price": live_price,
+        "ltp": live_price,
         "change_pts": change_pts,
         "day_change_pct": change_pct,
+        "changePct": change_pct,
         "open": open_p,
         "day_high": high_p,
         "day_low": low_p,
@@ -404,6 +421,7 @@ def get_live_stock_quote(stock_dict: Dict) -> Dict:
         "fifty_two_week_high": round(base_price * 1.35, 2),
         "fifty_two_week_low": round(base_price * 0.68, 2),
         "market_cap_cr": stock_dict.get("market_cap_cr", 25000),
+        "marketCap": stock_dict.get("market_cap_cr", 25000),
         "pe_ratio": stock_dict.get("pe_ratio", 25.0),
         "beta": stock_dict.get("beta", 1.05),
         "bse_code": bse_code,
@@ -581,7 +599,7 @@ def fetch_stock_chart_data(ticker: str, timeframe: str = "1D") -> Dict:
             bar_spread = abs(np.random.uniform(0.0005, 0.003)) * c
             h = float(max(o, c) + bar_spread)
             l = float(min(o, c) - bar_spread)
-            v = int(np.random.randint(1500, 35000))
+            v = random.randint(1500, 35000)
             
             running_closes.append(c)
             sma_20 = float(np.mean(running_closes[max(0, i-19):i+1])) if i >= 5 else None

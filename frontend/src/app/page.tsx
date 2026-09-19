@@ -30,6 +30,7 @@ import { StockDetailModal } from "@/components/StockDetailModal";
 import { AiStockAnalystModal } from "@/components/AiStockAnalystModal";
 import { AiChatAdvisor } from "@/components/AiChatAdvisor";
 import { SettingsModal, SettingsState } from "@/components/SettingsModal";
+import { GrowwRightSidebarNav } from "@/dashboard/GrowwRightSidebarNav";
 
 import { 
   Sparkles, 
@@ -217,30 +218,41 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* 1. PORTFOLIO TAB */}
+        {/* 1. PORTFOLIO TAB WITH GROWW-STYLE RIGHT SIDEBAR NAVBAR */}
         {activeTab === "portfolio" && (
-          <div className="space-y-6">
-            <PortfolioOverview summary={summary} loading={loading} />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left Main Column: Portfolio, Sector Allocation & Holdings (8 Cols) */}
+            <div className="lg:col-span-8 space-y-6">
+              <PortfolioOverview summary={summary} loading={loading} />
 
-            {summary && summary.sector_exposures && (
-              <SectorHeatmap
-                exposures={summary.sector_exposures}
-                selectedSector={selectedSectorFilter}
-                onSelectSector={(sec) => setSelectedSectorFilter(sec || null)}
+              {summary && summary.sector_exposures && (
+                <SectorHeatmap
+                  exposures={summary.sector_exposures}
+                  selectedSector={selectedSectorFilter}
+                  onSelectSector={(sec) => setSelectedSectorFilter(sec || null)}
+                />
+              )}
+
+              <HoldingsTable
+                holdings={holdings}
+                loading={loading}
+                selectedSectorFilter={selectedSectorFilter}
+                onClearSectorFilter={() => setSelectedSectorFilter(null)}
+                onOpenSwapModal={(h) => setSelectedHoldingForSwap(h)}
+                onOpenTechnicalDrawer={(t) => setSelectedTickerForDrawer(t)}
+                onOpenStockDetail={(t) => setSelectedTickerForDetail(t)}
+                onOpenAiReport={(t) => setSelectedTickerForAiReport(t)}
+                onDeleteHolding={handleDeleteHolding}
               />
-            )}
+            </div>
 
-            <HoldingsTable
-              holdings={holdings}
-              loading={loading}
-              selectedSectorFilter={selectedSectorFilter}
-              onClearSectorFilter={() => setSelectedSectorFilter(null)}
-              onOpenSwapModal={(h) => setSelectedHoldingForSwap(h)}
-              onOpenTechnicalDrawer={(t) => setSelectedTickerForDrawer(t)}
-              onOpenStockDetail={(t) => setSelectedTickerForDetail(t)}
-              onOpenAiReport={(t) => setSelectedTickerForAiReport(t)}
-              onDeleteHolding={handleDeleteHolding}
-            />
+            {/* Right Side Column: Groww-Style Right Navbar (4 Cols) */}
+            <div className="lg:col-span-4 lg:sticky lg:top-20">
+              <GrowwRightSidebarNav
+                activeTab={activeTab}
+                onSelectTab={(tab) => setActiveTab(tab)}
+              />
+            </div>
           </div>
         )}
 

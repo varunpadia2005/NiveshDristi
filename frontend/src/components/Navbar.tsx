@@ -89,8 +89,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navItems: { id: NavTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     { id: "portfolio", label: "Dashboard", icon: <PieChart className="w-4 h-4" /> },
-    { id: "advisor", label: "AI Advisor", icon: <Sparkles className="w-4 h-4 text-emerald-500" />, badge: "Chat" },
+    { id: "screener", label: "Screener", icon: <TrendingUp className="w-4 h-4" /> },
+    { id: "ipos", label: "IPOs", icon: <Rocket className="w-4 h-4 text-purple-500" />, badge: "GMP" },
+    { id: "bonds", label: "Bonds & SGB", icon: <Landmark className="w-4 h-4 text-amber-500" /> },
+    { id: "etfs", label: "ETFs", icon: <Layers className="w-4 h-4 text-blue-500" /> },
     { id: "indices", label: "Indices", icon: <Activity className="w-4 h-4" />, badge: "Live" },
+    { id: "advisor", label: "AI Advisor", icon: <Sparkles className="w-4 h-4 text-emerald-500" />, badge: "Chat" },
     { id: "intelligence", label: "Pro Analytics", icon: <BrainCircuit className="w-4 h-4 text-amber-500" />, badge: "5 Tools" },
     { id: "backtest", label: "Backtest", icon: <BarChart3 className="w-4 h-4" /> },
   ];
